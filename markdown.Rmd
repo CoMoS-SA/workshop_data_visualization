@@ -1,0 +1,135 @@
+---
+title: "Markdown Sample"
+author: "Matteo Coronese"
+date: "13/11/2019"
+output: html_document
+bibliography: sample.bib
+---
+
+```{r setup, include=FALSE}
+#global settings: 
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, errors=F, message=F) #always include the code unless specified locally in code chunks. Never include, unnless specified locally, warnings. 
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+Here are some useful tips for your markdown document.
+
+---
+
+####Font styles:
+
+\**italics*\*
+
+\*\***bold**\*\*
+
+\``code`\`
+
+---
+
+####Heading
+More # means smaller fonts
+
+# # Very Big
+## ## Big 
+### ### Normal
+#### #### Small
+##### ##### Very Small
+
+---
+
+####Other useful stuff
+Use - for lists:
+
+- [link](www.google.com) 
+- Latex equations: $E=mc^2$
+- And bibliographies [@dosi1982technological]
+
+Shortcuts:
+
+- To insert a new code chunk, Command+Option+I for Mac Users, Ctrl+Alt+I for Windows.
+- To knitr document, `Command+Shift+K` for Mac Users, `Ctrl+Shift+K for Windows`.
+- Check the [full list](https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts) 
+
+---
+
+####Tables
+You can use basic markdown also to construct tables. To indicate the number of columns, use at least three dashes (-) per each header cell. 
+
+| **Tables**        | *Are*           | `Cool`  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| climate change | is bad      |    $1 |
+
+For nicer, more advanced table use the `kableExtra` package ([here](http://haozhu233.github.io/kableExtra/awesome_table_in_html.html) is a guide).
+
+*******
+
+## The Lotka-Volterra prey-predator model
+A very useful Rmarkdown application is to produce reports for your model. Just import simulated data (or generate it locally) and manipulate them through `tidyverse`. Then, for each experiment you can automatically produce documents including e.g. parametrization, initialization, tables and graphs that allows you to explore your model features. 
+
+### Model
+```{r model}
+
+library(tidyverse)
+library(deSolve)
+
+# parameters
+pars <- c(alpha = 1, beta = 0.2, delta = 0.5, gamma = 0.2)
+# initial state 
+init <- c(x = 1, y = 2) #x is prey, y is predator
+# times
+times <- seq(0, 100, by = 1)
+
+lv_model <- function(pars, times = seq(0, 50, by = 1)) {
+  # initial state 
+  state <- c(x = 1, y = 2)
+  # derivative
+  deriv <- function(t, state, pars) {
+    with(as.list(c(state, pars)), {
+      d_x <- alpha * x - beta * x * y
+      d_y <- delta * beta * x * y - gamma * y
+      return(list(c(x = d_x, y = d_y)))
+    })
+  }
+  # solve
+  ode(y = state, times = times, func = deriv, parms = pars)
+}
+
+lv_results <- lv_model(pars = pars, times = seq(0, 50, by = 0.25))
+```
+### Parametrization
+Parameters | | | |
+:---| :---:| ---:| ---|
+Alpha | Beta | Gamma | Delta
+1 | 2 | 3 | 4
+
+Initialization | |
+---| ---|
+Prey | 1 |
+Predator | 2 | 
+
+
+
+### Inserting Plots
+```{r plotting, echo=FALSE}
+lv_results %>% 
+  data.frame() %>% 
+  gather(var, pop, -time) %>% 
+  mutate(var = if_else(var == "x", "Prey", "Predator")) %>% 
+  ggplot(aes(x = time, y = pop)) +
+    geom_line(aes(color = var)) +
+    scale_color_brewer(NULL, palette = "Set1") +
+    labs(title = "Lotka-Volterra predator prey model",
+         subtitle = paste(names(pars), pars, sep = " = ", collapse = "; "),
+         x = "Time", y = "Population density")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+### Bibliography
