@@ -5,7 +5,7 @@ This repository contains the material for the CoMoS Workshop on "Data Visualizat
 
 ![poster](https://www.boostlabs.com/wp-content/uploads/2019/09/10-types-of-data-visualization.jpg)
 
-The workshops cover a very basic introduction to *tidyverse* ([here](https://github.com/CoMoS-SA/workshop_R-tidyverse) is the repo for the *tidyverse* workshop), usage of *ggplot* for data visualization and a brief *Rmarkdown* tutorial.  
+The workshops covers a very basic introduction to *tidyverse* ([here](https://github.com/CoMoS-SA/workshop_R-tidyverse) is the repo for the full *tidyverse* workshop), the usage of *ggplot* for data visualization and a brief *Rmarkdown* tutorial.  
 
 Files in the repo:
 - `data_visualization.pdf` contains lecture's slides. Beside example and code chunks, you can find links to useful tutorials and cheatsheets. 
